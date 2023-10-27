@@ -94,9 +94,11 @@ typedef int ssize_t;
 #endif
 #include <inttypes.h>
 #endif
+#if !defined(SF2000)
 #ifndef PRId64
 #error "inttypes.h is being screwy"
 #endif
+#endif //!defined(SF2000)
 #define STRING_REP_INT64 "%" PRId64
 #define STRING_REP_UINT64 "%" PRIu64
 #define STRING_REP_USIZE "%" PRIuPTR
