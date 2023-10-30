@@ -598,6 +598,8 @@ unsigned cpu_features_get_core_amount(void)
    return amount;
 #elif defined(_XBOX360)
    return 3;
+#elif defined(SF2000)
+   return 1;
 #else
    /* No idea, assume single core. */
    return 1;
