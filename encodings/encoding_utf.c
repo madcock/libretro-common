@@ -410,6 +410,7 @@ char *local_to_utf8_string_alloc(const char *str)
 	return NULL;
 }
 
+#if !defined(SF2000)
 /**
  * utf8_to_utf16_string_alloc:
  * 
@@ -530,3 +531,5 @@ char* utf16_to_utf8_string_alloc(const wchar_t *str)
 
    return buf;
 }
+
+#endif // !defined(SF2000)

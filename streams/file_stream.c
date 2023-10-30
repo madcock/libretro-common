@@ -41,6 +41,10 @@
 
 #define VFS_ERROR_RETURN_VALUE -1
 
+#if defined(SF2000)
+void xlog(const char *fmt, ...);
+#endif
+
 struct RFILE
 {
    struct retro_vfs_file_handle *hfile;

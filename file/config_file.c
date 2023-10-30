@@ -39,6 +39,10 @@
 
 #define MAX_INCLUDE_DEPTH 16
 
+#if defined(SF2000)
+void xlog(const char *fmt, ...);
+#endif
+
 struct config_include_list
 {
    char *path;

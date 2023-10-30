@@ -53,7 +53,7 @@
 #  endif
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#  if !defined(VITA)
+#  if !defined(VITA) && !defined(SF2000)
 #  include <dirent.h>
 #  endif
 #  include <unistd.h>
@@ -75,7 +75,9 @@
 #  endif
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  if !defined(SF2000)
 #  include <dirent.h>
+#  endif
 #  include <unistd.h>
 #endif
 
@@ -213,7 +215,7 @@
 #include <vfs/vfs_implementation_cdrom.h>
 #endif
 
-#if (defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE - 0) >= 200112) || (defined(__POSIX_VISIBLE) && __POSIX_VISIBLE >= 200112) || (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112) || __USE_LARGEFILE || (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)
+#if ((defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE - 0) >= 200112) || (defined(__POSIX_VISIBLE) && __POSIX_VISIBLE >= 200112) || (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200112) || __USE_LARGEFILE || (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64)) && !defined(SF2000)
 #ifndef HAVE_64BIT_OFFSETS
 #define HAVE_64BIT_OFFSETS
 #endif
@@ -615,7 +617,7 @@ int64_t retro_vfs_file_truncate_impl(libretro_vfs_implementation_file *stream, i
 	   stream->size = length;
 	   return 0;
    }
-#elif !defined(VITA) && !defined(PSP) && !defined(PS2) && !defined(ORBIS) && (!defined(SWITCH) || defined(HAVE_LIBNX))
+#elif !defined(VITA) && !defined(PSP) && !defined(PS2) && !defined(ORBIS) && (!defined(SWITCH) || defined(HAVE_LIBNX)) && !defined(SF2000)
    if (stream && ftruncate(fileno(stream->fp), (off_t)length) == 0)
    {
       stream->size = length;
@@ -700,7 +702,11 @@ int64_t retro_vfs_file_read_impl(libretro_vfs_implementation_file *stream,
 int64_t retro_vfs_file_write_impl(libretro_vfs_implementation_file *stream, const void *s, uint64_t len)
 {
    int64_t pos    = 0;
+#if defined(SF2000)
+   size_t result = -1;
+#else
    ssize_t result = -1;
+#endif
 
    if (!stream)
       return -1;
@@ -834,9 +840,11 @@ int retro_vfs_file_rename_impl(const char *old_path, const char *new_path)
 const char *retro_vfs_file_get_path_impl(
       libretro_vfs_implementation_file *stream)
 {
+#ifndef SF2000
    /* should never happen, do something noisy so caller can be fixed */
    if (!stream)
       abort();
+#endif
    return stream->orig_path;
 }
 
@@ -1029,6 +1037,8 @@ int retro_vfs_mkdir_impl(const char *dir)
       return -2;
    return ret < 0 ? -1 : 0;
 }
+
+#ifndef SF2000
 
 #ifdef VFS_FRONTEND
 struct retro_vfs_dir_handle
@@ -1244,3 +1254,4 @@ int retro_vfs_closedir_impl(libretro_vfs_implementation_dir *rdir)
    free(rdir);
    return 0;
 }
+#endif /* #ifndef SF2000 */
