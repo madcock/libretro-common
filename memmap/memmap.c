@@ -113,7 +113,11 @@ int mprotect(void *addr, size_t len, int prot)
 void* mmap(void *addr, size_t len, int prot, int flags,
       int fildes, size_t offset)
 {
+#if !defined(SF2000)
    return malloc(len);
+#else
+   return calloc(len, 1);
+#endif
 }
 
 int munmap(void *addr, size_t len)

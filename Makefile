@@ -11,6 +11,7 @@ CFLAGS += -DSF2000
 
 CFLAGS += -O2 -DNDEBUG
 CFLAGS += -Iinclude -I./include/compat/zlib
+CFLAGS += -D_7ZIP_ST
 
 TARGET=libretro-common.a
 
@@ -25,6 +26,8 @@ SOURCES_C += \
 	libco/libco.c \
 	streams/file_stream.c \
 	streams/file_stream_transforms.c \
+	streams/memory_stream.c \
+	streams/interface_stream.c \
 	string/stdstring.c \
 	vfs/vfs_implementation.c
 
@@ -58,7 +61,9 @@ SOURCES_C += \
         $(DEPS_DIR)/7zip/CpuArch.c \
         $(DEPS_DIR)/7zip/Delta.c \
         $(DEPS_DIR)/7zip/Lzma2Dec.c \
-        $(DEPS_DIR)/7zip/LzmaDec.c
+        $(DEPS_DIR)/7zip/LzmaDec.c \
+        $(DEPS_DIR)/7zip/LzmaEnc.c \
+        $(DEPS_DIR)/7zip/LzFind.c
 
 OBJECTS := $(SOURCES_C:.c=.o)
 
