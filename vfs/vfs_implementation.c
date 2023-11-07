@@ -53,9 +53,13 @@
 #  endif
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#  if !defined(VITA) && !defined(SF2000)
+#  if !defined(VITA)
+#  if !defined(SF2000)
 #  include <dirent.h>
-#  endif
+#  else
+#  include "../../../../../../dirent.h"
+#  endif //!defined(SF2000)
+#  endif //!defined(VITA)
 #  include <unistd.h>
 #  if defined(WIIU)
 #  include <malloc.h>
@@ -77,6 +81,8 @@
 #  include <sys/stat.h>
 #  if !defined(SF2000)
 #  include <dirent.h>
+#  else
+#  include "../../../../../../dirent.h"
 #  endif
 #  include <unistd.h>
 #endif
@@ -1038,7 +1044,7 @@ int retro_vfs_mkdir_impl(const char *dir)
    return ret < 0 ? -1 : 0;
 }
 
-#ifndef SF2000
+//#ifndef SF2000
 
 #ifdef VFS_FRONTEND
 struct retro_vfs_dir_handle
@@ -1221,8 +1227,10 @@ bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir *rdir)
    if (entry->d_type == DT_DIR)
       return true;
    /* This can happen on certain file systems. */
+#if !defined(SF2000)
    if (!(entry->d_type == DT_UNKNOWN || entry->d_type == DT_LNK))
       return false;
+#endif //!defined(SF2000)
 #endif
    /* dirent struct doesn't have d_type, do it the slow way ... */
    fill_pathname_join_special(path, rdir->orig_path, retro_vfs_dirent_get_name_impl(rdir), sizeof(path));
@@ -1254,4 +1262,4 @@ int retro_vfs_closedir_impl(libretro_vfs_implementation_dir *rdir)
    free(rdir);
    return 0;
 }
-#endif /* #ifndef SF2000 */
+//#endif /* #ifndef SF2000 */
