@@ -22,6 +22,7 @@ SOURCES_C += \
 	encodings/encoding_utf.c \
 	file/config_file.c \
 	file/file_path.c \
+	file/retro_dirent.c \
 	file/file_path_io.c \
 	libco/libco.c \
 	streams/file_stream.c \

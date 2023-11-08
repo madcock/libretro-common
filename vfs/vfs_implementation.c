@@ -53,8 +53,12 @@
 #  endif
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#  if !defined(VITA) && !defined(SF2000)
+#  if !defined(VITA)
+#  if !defined(SF2000)
 #  include <dirent.h>
+#  else
+#  include "../../../dirent.h"
+#  endif
 #  endif
 #  include <unistd.h>
 #  if defined(WIIU)
@@ -78,7 +82,7 @@
 #  if !defined(SF2000)
 #  include <dirent.h>
 #  else
-#  include <dirent.h>
+#  include "../../../dirent.h"
 #  endif
 #  include <unistd.h>
 #endif
@@ -1040,8 +1044,6 @@ int retro_vfs_mkdir_impl(const char *dir)
    return ret < 0 ? -1 : 0;
 }
 
-#ifndef SF2000
-
 #ifdef VFS_FRONTEND
 struct retro_vfs_dir_handle
 #else
@@ -1204,6 +1206,7 @@ const char *retro_vfs_dirent_get_name_impl(libretro_vfs_implementation_dir *rdir
 #endif
 }
 
+#ifndef SF2000
 bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir *rdir)
 {
 #if defined(_WIN32)
@@ -1233,6 +1236,7 @@ bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir *rdir)
    return S_ISDIR(buf.st_mode);
 #endif
 }
+#endif /* #ifndef SF2000 */
 
 int retro_vfs_closedir_impl(libretro_vfs_implementation_dir *rdir)
 {
@@ -1256,4 +1260,3 @@ int retro_vfs_closedir_impl(libretro_vfs_implementation_dir *rdir)
    free(rdir);
    return 0;
 }
-#endif /* #ifndef SF2000 */
