@@ -30,6 +30,7 @@ SOURCES_C += \
 	streams/memory_stream.c \
 	streams/interface_stream.c \
 	string/stdstring.c \
+	time/rtime.c \
 	vfs/vfs_implementation.c
 
 DEPS_DIR = deps
