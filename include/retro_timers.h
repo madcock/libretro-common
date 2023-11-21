@@ -59,6 +59,20 @@
 #endif
 #include <retro_inline.h>
 
+#if defined(SF2000)
+extern "C" int dly_tsk(unsigned ms);
+static int nanosleepSF2000(const struct timespec *rqtp, struct timespec *rmtp)
+{
+   dly_tsk(1000000L * rqtp->tv_sec + rqtp->tv_nsec / 1000);
+
+   if (rmtp)
+      rmtp->tv_sec = rmtp->tv_nsec=0;
+
+   return 0;
+}
+#define nanosleep nanosleepSF2000
+#endif
+
 #ifdef DJGPP
 #define timespec timeval
 #define tv_nsec tv_usec
@@ -97,7 +111,7 @@ static int nanosleepDOS(const struct timespec *rqtp, struct timespec *rmtp)
 #define retro_sleep(msec) (udelay(1000 * (msec)))
 #elif !defined(__PSL1GHT__) && defined(__PS3__)
 #define retro_sleep(msec) (sys_timer_usleep(1000 * (msec)))
-#elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__) || defined(SF2000)
+#elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
 #define retro_sleep(msec) (usleep(1000 * (msec)))
 #elif defined(WIIU)
 #define retro_sleep(msec) (OSSleepTicks(ms_to_ticks((msec))))
