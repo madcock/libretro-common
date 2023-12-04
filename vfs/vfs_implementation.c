@@ -1206,7 +1206,6 @@ const char *retro_vfs_dirent_get_name_impl(libretro_vfs_implementation_dir *rdir
 #endif
 }
 
-#ifndef SF2000
 bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir *rdir)
 {
 #if defined(_WIN32)
@@ -1236,7 +1235,6 @@ bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir *rdir)
    return S_ISDIR(buf.st_mode);
 #endif
 }
-#endif /* #ifndef SF2000 */
 
 int retro_vfs_closedir_impl(libretro_vfs_implementation_dir *rdir)
 {
