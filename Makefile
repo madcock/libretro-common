@@ -16,15 +16,23 @@ CFLAGS += -D_7ZIP_ST
 TARGET=libretro-common.a
 
 SOURCES_C += \
+	audio/conversion/float_to_s16.c \
+	audio/conversion/s16_to_float.c \
+	audio/resampler/audio_resampler.c \
+	audio/resampler/drivers/sinc_resampler.c \
 	compat/compat_strl.c \
 	compat/compat_strcasestr.c \
 	encodings/encoding_crc32.c \
 	encodings/encoding_utf.c \
+	features/features_cpu.c  \
 	file/config_file.c \
+	file/config_file_userdata.c \
 	file/file_path.c \
 	file/retro_dirent.c \
 	file/file_path_io.c \
 	libco/libco.c \
+	lists/string_list.c \
+	memmap/memalign.c \
 	streams/file_stream.c \
 	streams/file_stream_transforms.c \
 	streams/memory_stream.c \

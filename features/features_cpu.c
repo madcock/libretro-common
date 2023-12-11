@@ -265,6 +265,8 @@ retro_time_t cpu_features_get_time_usec(void)
    return uclock() * 1000000LL / UCLOCKS_PER_SEC;
 #elif defined(ORBIS)
    return sceKernelGetProcessTime();
+#elif defined(SF2000)
+   return os_get_tick_count() * 1000;
 #else
 #error "Your platform does not have a timer function implemented in cpu_features_get_time_usec(). Cannot continue."
 #endif

@@ -60,7 +60,7 @@
 #include <retro_inline.h>
 
 #if defined(SF2000)
-extern "C" int dly_tsk(unsigned ms);
+extern int dly_tsk(unsigned ms);
 static int nanosleepSF2000(const struct timespec *rqtp, struct timespec *rmtp)
 {
    dly_tsk(1000000L * rqtp->tv_sec + rqtp->tv_nsec / 1000);
