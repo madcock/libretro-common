@@ -11,6 +11,7 @@ CFLAGS += -DSF2000
 
 CFLAGS += -O2 -DNDEBUG
 CFLAGS += -Iinclude -I./include/compat/zlib
+CFLAGS += -I../..
 CFLAGS += -D_7ZIP_ST
 
 TARGET=libretro-common.a
@@ -28,17 +29,18 @@ SOURCES_C += \
 	file/config_file.c \
 	file/config_file_userdata.c \
 	file/file_path.c \
-	file/retro_dirent.c \
 	file/file_path_io.c \
+	file/retro_dirent.c \
 	libco/libco.c \
 	lists/string_list.c \
 	memmap/memalign.c \
 	streams/file_stream.c \
 	streams/file_stream_transforms.c \
-	streams/memory_stream.c \
 	streams/interface_stream.c \
+	streams/memory_stream.c \
 	string/stdstring.c \
 	time/rtime.c \
+	utils/md5.c \
 	vfs/vfs_implementation.c
 
 DEPS_DIR = deps
