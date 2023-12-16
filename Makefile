@@ -21,6 +21,7 @@ SOURCES_C += \
 	audio/conversion/s16_to_float.c \
 	audio/resampler/audio_resampler.c \
 	audio/resampler/drivers/sinc_resampler.c \
+	compat/fopen_utf8.c \
 	compat/compat_strl.c \
 	compat/compat_strcasestr.c \
 	encodings/encoding_crc32.c \
