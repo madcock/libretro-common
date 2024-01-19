@@ -22,7 +22,9 @@ SOURCES_C += \
 	audio/resampler/audio_resampler.c \
 	audio/resampler/drivers/sinc_resampler.c \
 	compat/fopen_utf8.c \
+	compat/compat_posix_string.c \
 	compat/compat_strl.c \
+	compat/compat_snprintf.c \
 	compat/compat_strcasestr.c \
 	encodings/encoding_crc32.c \
 	encodings/encoding_utf.c \
@@ -33,8 +35,11 @@ SOURCES_C += \
 	file/file_path_io.c \
 	file/retro_dirent.c \
 	libco/libco.c \
+	lists/dir_list.c \
 	lists/string_list.c \
 	memmap/memalign.c \
+	memmap/memmap.c \
+	streams/chd_stream.c \
 	streams/file_stream.c \
 	streams/file_stream_transforms.c \
 	streams/interface_stream.c \
@@ -45,6 +50,7 @@ SOURCES_C += \
 	vfs/vfs_implementation.c
 
 DEPS_DIR = deps
+CFLAGS += -I$(DEPS_DIR) -I$(DEPS_DIR)/libchdr/include
 SOURCES_C += \
         $(DEPS_DIR)/libz/adler32.c \
         $(DEPS_DIR)/libz/crc32.c \
