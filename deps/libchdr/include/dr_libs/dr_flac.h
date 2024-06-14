@@ -7711,8 +7711,13 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
     drflac_uint32 wholeSIMDVectorCountPerChannel;
     drflac_uint32 decodedSamplesAllocationSize;
 #ifndef DR_FLAC_NO_OGG
+#ifdef SF2000
+    drflac_oggbs* pOggbs = NULL;
+#else
     drflac_oggbs oggbs;
 #endif
+#endif
+
     drflac_uint64 firstFramePos;
     drflac_uint64 seektablePos;
     drflac_uint32 seektableSize;
@@ -7769,6 +7774,22 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
     /* There's additional data required for Ogg streams. */
     if (init.container == drflac_container_ogg) {
         allocationSize += sizeof(drflac_oggbs);
+#ifdef SF2000
+        pOggbs = (drflac_oggbs*)drflac__malloc_from_callbacks(sizeof(*pOggbs), &allocationCallbacks);
+        if (pOggbs == NULL) {
+            return NULL; //DRFLAC_OUT_OF_MEMORY;
+        }
+
+        DRFLAC_ZERO_MEMORY(pOggbs, sizeof(*pOggbs));
+        pOggbs->onRead = onRead;
+        pOggbs->onSeek = onSeek;
+        pOggbs->pUserData = pUserData;
+        pOggbs->currentBytePos = init.oggFirstBytePos;
+        pOggbs->firstBytePos = init.oggFirstBytePos;
+        pOggbs->serialNumber = init.oggSerial;
+        pOggbs->bosPageHeader = init.oggBosHeader;
+        pOggbs->bytesRemainingInPage = 0;
+#else
     }
 
     DRFLAC_ZERO_MEMORY(&oggbs, sizeof(oggbs));
@@ -7781,8 +7802,9 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
         oggbs.serialNumber = init.oggSerial;
         oggbs.bosPageHeader = init.oggBosHeader;
         oggbs.bytesRemainingInPage = 0;
+#endif // SF2000
     }
-#endif
+#endif // DR_FLAC_NO_OGG
 
     /*
     This part is a bit awkward. We need to load the seektable so that it can be referenced in-memory, but I want the drflac object to
@@ -7801,11 +7823,18 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
         if (init.container == drflac_container_ogg) {
             onReadOverride = drflac__on_read_ogg;
             onSeekOverride = drflac__on_seek_ogg;
+#ifdef SF2000
+			pUserDataOverride = (void*)pOggbs;
+#else
             pUserDataOverride = (void*)&oggbs;
+#endif // SF2000
         }
-#endif
+#endif // DR_FLAC_NO_OGG
 
         if (!drflac__read_and_decode_metadata(onReadOverride, onSeekOverride, onMeta, pUserDataOverride, pUserDataMD, &firstFramePos, &seektablePos, &seektableSize, &allocationCallbacks)) {
+#if !defined(DR_FLAC_NO_OGG) && defined(SF2000)
+            drflac__free_from_callbacks(pOggbs, &allocationCallbacks);
+#endif
             return NULL;
         }
 
@@ -7815,6 +7844,9 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
 
     pFlac = (drflac*)drflac__malloc_from_callbacks(allocationSize, &allocationCallbacks);
     if (pFlac == NULL) {
+#if !defined(DR_FLAC_NO_OGG) && defined(SF2000)
+        drflac__free_from_callbacks(pOggbs, &allocationCallbacks);
+#endif
         return NULL;
     }
 
@@ -7825,7 +7857,15 @@ static drflac* drflac_open_with_metadata_private(drflac_read_proc onRead, drflac
 #ifndef DR_FLAC_NO_OGG
     if (init.container == drflac_container_ogg) {
         drflac_oggbs* pInternalOggbs = (drflac_oggbs*)((drflac_uint8*)pFlac->pDecodedSamples + decodedSamplesAllocationSize + seektableSize);
+#ifdef SF2000
+        DRFLAC_COPY_MEMORY(pInternalOggbs, pOggbs, sizeof(*pOggbs));
+
+        /* At this point the pOggbs object has been handed over to pInternalOggbs and can be freed. */
+        drflac__free_from_callbacks(pOggbs, &allocationCallbacks);
+        pOggbs = NULL;
+#else
         *pInternalOggbs = oggbs;
+#endif // SF2000
 
         /* The Ogg bistream needs to be layered on top of the original bitstream. */
         pFlac->bs.onRead = drflac__on_read_ogg;
